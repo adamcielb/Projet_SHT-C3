@@ -1,0 +1,55 @@
+/* 
+  Capteur de température et d'humidité SHTC3
+  
+  Programme basique sur Arduino Mega
+  IDE Visual Studio Code 1.95.3
+  
+  Constituants :
+  - Module Adafruit SHTC3
+
+  Version 1 : 11/12/2024
+
+  Boumaad Adam
+*/
+
+#include <Wire.h>             // Inclure la bibliothèque I2C
+#include "Adafruit_SHTC3.h"    // Inclure la bibliothèque Adafruit pour le capteur SHTC3
+
+// Créer un objet pour le capteur SHTC3
+Adafruit_SHTC3 shtc3 = Adafruit_SHTC3();
+
+void setup() {
+  Serial.begin(9600);  // Initialiser la communication série
+  Serial.println("///////////////");
+  Serial.println("/////SHTC3/////");
+  Serial.println("///////////////");
+  delay(1000);
+
+  Wire.begin();  // Initialiser la communication I2C
+
+  // Initialiser le capteur SHTC3
+  if (!shtc3.begin()) {
+    Serial.println("Impossible de trouver le capteur SHTC3");
+    while (1) delay(1);  // Si le capteur n'est pas trouvé, rester bloqué ici
+  }
+  Serial.println("Capteur SHTC3 trouvé !");
+}
+
+void loop() {
+  // Variables pour stocker les mesures de température et d'humidité
+  sensors_event_t humidity, temp;
+
+  // Obtenir les mesures du capteur
+  shtc3.getEvent(&humidity, &temp);
+
+  // Affichage des valeurs de température et d'humidité sur le moniteur série
+  Serial.print("Température : ");
+  Serial.print(temp.temperature);
+  Serial.println(" °C");
+
+  Serial.print("Humidité : ");
+  Serial.print(humidity.relative_humidity);
+  Serial.println(" %");
+
+  delay(2000);  // Attente de 2 secondes avant la prochaine lecture
+}
